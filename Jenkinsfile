@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credential
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         IMAGE_NAME = "remya92/website:latest"
+        KUBECONFIG = "/root/.kube/config"
     }
 
     stages {
@@ -15,7 +16,6 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // No sudo needed inside the Jenkins container
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
@@ -32,8 +32,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                # Assuming deployment.yaml exists in your repo
-                sudo k3s kubectl apply -f deployment.yaml
+                export KUBECONFIG=/root/.kube/config
+                kubectl apply -f deployment.yaml
                 '''
             }
         }
