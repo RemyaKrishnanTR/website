@@ -9,10 +9,10 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/RemyaKrishnanTR/website.git'
-            }
-        }
+    steps {
+        git branch: 'main', url: 'https://github.com/RemyaKrishnanTR/website.git'
+    }
+}
 
         stage('Build Docker Image') {
             steps {
