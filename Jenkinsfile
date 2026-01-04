@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Must create in Jenkins
         IMAGE_NAME = "remya92/website:latest"
     }
 
@@ -12,11 +12,13 @@ pipeline {
                 git 'https://github.com/RemyaKrishnanTR/website.git'
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
                 sh '''
@@ -25,6 +27,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh 'k3s kubectl apply -f deployment.yaml'
